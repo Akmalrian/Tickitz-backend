@@ -28,6 +28,9 @@ func (as *AuthService) Login(ctx context.Context, req dto.LoginRequest) (dto.Log
 	if req.Email == "" || req.Password == "" {
 		return dto.LoginResponse{}, apperror.ErrInvalidCredentials
 	}
+	if len(req.Password) < 8 {
+		return dto.LoginResponse{}, apperror.ErrInvalidPassword
+	}
 	if !pkg.IsValidEmail(req.Email) {
 		return dto.LoginResponse{}, apperror.ErrInvalidEmail
 	}
