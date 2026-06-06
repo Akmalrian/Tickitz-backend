@@ -47,19 +47,17 @@ CREATE TABLE directors (
     name VARCHAR(255) NOT NULL
 );
 
-CREATE TABLE movies (
-    email VARCHAR(255) UNIQUE NOT NULL,
-    password VARCHAR(255) NOT NULL,
-    first_name VARCHAR(100),
-    last_name VARCHAR(100),
-    phone VARCHAR(50) UNIQUE,
-    photo VARCHAR(255),
-    location_id INTEGER,
-    isActive BOOLEAN DEFAULT true,
-    role status_role,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP,
-    CONSTRAINT fk_users_location FOREIGN KEY (location_id) REFERENCES locations(id)
+CREATE TABLE movies
+(
+    id SERIAL PRIMARY KEY,
+    title VARCHAR(255) NOT NULL,
+    duration INTERVAL,
+    poster VARCHAR(255),
+    realase_data DATE,
+    synopsis TEXT,
+    category VARCHAR(155),
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP
 );
 
 CREATE TABLE cinemas (
