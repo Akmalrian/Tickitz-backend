@@ -38,3 +38,12 @@ $$
         WHEN duplicate_object THEN NULL;
     END
 $$;
+
+DO
+$$
+    BEGIN
+        CREATE TYPE type_seat AS ENUM ('regular', 'love_nest');
+    EXCEPTION
+        WHEN duplicate_object THEN NULL;
+    END
+$$;
