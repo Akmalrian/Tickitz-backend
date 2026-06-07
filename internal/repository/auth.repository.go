@@ -10,11 +10,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
-// type AuthRepository interface {
-// 	// Register(ctx context.Context, user *model.Users) (model.Users, error)
-// 	CheckEmailExist(ctx context.Context, email string) (bool, error)
-// 	Login(ctx context.Context, email string) (model.Users, error)
-// }
+//	type AuthRepository interface {
+//		// Register(ctx context.Context, user *model.Users) (model.Users, error)
+//		CheckEmailExist(ctx context.Context, email string) (bool, error)
+//		Login(ctx context.Context, email string) (model.Users, error)
+//	}
 type AuthRepository struct {
 	db *pgxpool.Pool
 }
@@ -37,13 +37,13 @@ func NewAuthRepository(db *pgxpool.Pool) *AuthRepository {
 
 func (ar *AuthRepository) CheckEmailExist(ctx context.Context, email string) (bool, error) {
 	query := `SELECT EXISTS(SELECT 1 FROM users WHERE email = $1)`
-	
+
 	var exists bool
 	err := ar.db.QueryRow(ctx, query, email).Scan(&exists)
 	if err != nil {
 		return false, err
 	}
-	
+
 	return exists, nil
 }
 func (ar *AuthRepository) Login(ctx context.Context, email string) (model.Users, error) {
@@ -58,7 +58,9 @@ func (ar *AuthRepository) Login(ctx context.Context, email string) (model.Users,
 		return model.Users{}, err
 	}
 	if locID != nil {
-		user.Location.ID = *locID
+		user.Location = &model.Locations{
+			ID: *locID,
+		}
 	}
 	return user, nil
 }
