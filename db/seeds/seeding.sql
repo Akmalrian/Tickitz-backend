@@ -1887,33 +1887,33 @@ INSERT INTO seats (cinema_id, seat_number, row, seat_type) VALUES
 -- ============================================================
 INSERT INTO users (id, email, password, first_name, last_name, phone, photo, location_id, isActive, role) VALUES
 -- ADMIN
-(1,  'admin@tickitz.id',           '$2b$10$hashed.admin001.xxxxx.xxxxx', 'Super',    'Admin',       '08100000001', 'https://storage.tickitz.id/users/admin1.jpg',   1,  true,  'admin'),
-(2,  'budi.admin@tickitz.id',      '$2b$10$hashed.admin002.xxxxx.xxxxx', 'Budi',     'Santoso',     '08100000002', 'https://storage.tickitz.id/users/admin2.jpg',   2,  true,  'admin'),
-(3,  'sari.admin@tickitz.id',      '$2b$10$hashed.admin003.xxxxx.xxxxx', 'Sari',     'Wulandari',   '08100000003', 'https://storage.tickitz.id/users/admin3.jpg',   3,  true,  'admin'),
+(1,  'admin@tickitz.id',           '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y', 'Super',    'Admin',       '08100000001', 'https://storage.tickitz.id/users/admin1.jpg',   1,  true,  'admin'),
+(2,  'budi.admin@tickitz.id',      '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y', 'Budi',     'Santoso',     '08100000002', 'https://storage.tickitz.id/users/admin2.jpg',   2,  true,  'admin'),
+(3,  'sari.admin@tickitz.id',      '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y', 'Sari',     'Wulandari',   '08100000003', 'https://storage.tickitz.id/users/admin3.jpg',   3,  true,  'admin'),
 -- USER AKTIF (isActive = true)
-(4,  'andi.pratama@gmail.com',     '$2b$10$hashed.user004.xxxxx.xxxxx',  'Andi',     'Pratama',     '08111111101', 'https://storage.tickitz.id/users/user4.jpg',    1,  true,  'user'),
-(5,  'rina.lestari@gmail.com',     '$2b$10$hashed.user005.xxxxx.xxxxx',  'Rina',     'Lestari',     '08111111102', 'https://storage.tickitz.id/users/user5.jpg',    1,  true,  'user'),
-(6,  'doni.kurniawan@yahoo.com',   '$2b$10$hashed.user006.xxxxx.xxxxx',  'Doni',     'Kurniawan',   '08111111103', 'https://storage.tickitz.id/users/user6.jpg',    2,  true,  'user'),
-(7,  'bagas.wijaya@gmail.com',     '$2b$10$hashed.user007.xxxxx.xxxxx',  'Bagas',    'Wijaya',      '08111111104', 'https://storage.tickitz.id/users/user7.jpg',    3,  true,  'user'),
-(8,  'nadia.putri@gmail.com',      '$2b$10$hashed.user008.xxxxx.xxxxx',  'Nadia',    'Putri',       '08111111105', 'https://storage.tickitz.id/users/user8.jpg',    3,  true,  'user'),
-(9,  'reza.maulana@gmail.com',     '$2b$10$hashed.user009.xxxxx.xxxxx',  'Reza',     'Maulana',     '08111111106', 'https://storage.tickitz.id/users/user9.jpg',    4,  true,  'user'),
-(10, 'fitri.handayani@gmail.com',  '$2b$10$hashed.user010.xxxxx.xxxxx',  'Fitri',    'Handayani',   '08111111107', 'https://storage.tickitz.id/users/user10.jpg',   1,  true,  'user'),
-(11, 'hendra.gunawan@gmail.com',   '$2b$10$hashed.user011.xxxxx.xxxxx',  'Hendra',   'Gunawan',     '08111111108', 'https://storage.tickitz.id/users/user11.jpg',   5,  true,  'user'),
-(12, 'dewi.anggraeni@gmail.com',   '$2b$10$hashed.user012.xxxxx.xxxxx',  'Dewi',     'Anggraeni',   '08111111109', 'https://storage.tickitz.id/users/user12.jpg',   1,  true,  'user'),
-(13, 'agus.setiawan@gmail.com',    '$2b$10$hashed.user013.xxxxx.xxxxx',  'Agus',     'Setiawan',    '08111111110', 'https://storage.tickitz.id/users/user13.jpg',   8,  true,  'user'),
-(14, 'sinta.permata@gmail.com',    '$2b$10$hashed.user014.xxxxx.xxxxx',  'Sinta',    'Permata',     '08111111111', 'https://storage.tickitz.id/users/user14.jpg',   9,  true,  'user'),
-(15, 'lisa.amelia@gmail.com',      '$2b$10$hashed.user015.xxxxx.xxxxx',  'Lisa',     'Amelia',      '08111111112', 'https://storage.tickitz.id/users/user15.jpg',   2,  true,  'user'),
-(16, 'tommy.wirawan@gmail.com',    '$2b$10$hashed.user016.xxxxx.xxxxx',  'Tommy',    'Wirawan',     '08111111113', 'https://storage.tickitz.id/users/user16.jpg',   3,  true,  'user'),
-(17, 'yuni.astuti@gmail.com',      '$2b$10$hashed.user017.xxxxx.xxxxx',  'Yuni',     'Astuti',      '08111111114', 'https://storage.tickitz.id/users/user17.jpg',   1,  true,  'user'),
-(18, 'kevin.pratama@gmail.com',    '$2b$10$hashed.user018.xxxxx.xxxxx',  'Kevin',    'Pratama',     '08111111115', 'https://storage.tickitz.id/users/user18.jpg',   6,  true,  'user'),
-(19, 'amanda.putri@gmail.com',     '$2b$10$hashed.user019.xxxxx.xxxxx',  'Amanda',   'Putri',       '08111111116', 'https://storage.tickitz.id/users/user19.jpg',  11,  true,  'user'),
-(20, 'rizky.hamdani@gmail.com',    '$2b$10$hashed.user020.xxxxx.xxxxx',  'Rizky',    'Hamdani',     '08111111117', 'https://storage.tickitz.id/users/user20.jpg',   1,  true,  'user'),
-(21, 'clara.monica@gmail.com',     '$2b$10$hashed.user021.xxxxx.xxxxx',  'Clara',    'Monica',      '08111111118', 'https://storage.tickitz.id/users/user21.jpg',   2,  true,  'user'),
-(22, 'dimas.arif@gmail.com',       '$2b$10$hashed.user022.xxxxx.xxxxx',  'Dimas',    'Arif',        '08111111119', 'https://storage.tickitz.id/users/user22.jpg',   7,  true,  'user'),
+(4,  'andi.pratama@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Andi',     'Pratama',     '08111111101', 'https://storage.tickitz.id/users/user4.jpg',    1,  true,  'user'),
+(5,  'rina.lestari@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Rina',     'Lestari',     '08111111102', 'https://storage.tickitz.id/users/user5.jpg',    1,  true,  'user'),
+(6,  'doni.kurniawan@yahoo.com',   '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Doni',     'Kurniawan',   '08111111103', 'https://storage.tickitz.id/users/user6.jpg',    2,  true,  'user'),
+(7,  'bagas.wijaya@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Bagas',    'Wijaya',      '08111111104', 'https://storage.tickitz.id/users/user7.jpg',    3,  true,  'user'),
+(8,  'nadia.putri@gmail.com',      '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Nadia',    'Putri',       '08111111105', 'https://storage.tickitz.id/users/user8.jpg',    3,  true,  'user'),
+(9,  'reza.maulana@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Reza',     'Maulana',     '08111111106', 'https://storage.tickitz.id/users/user9.jpg',    4,  true,  'user'),
+(10, 'fitri.handayani@gmail.com',  '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Fitri',    'Handayani',   '08111111107', 'https://storage.tickitz.id/users/user10.jpg',   1,  true,  'user'),
+(11, 'hendra.gunawan@gmail.com',   '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Hendra',   'Gunawan',     '08111111108', 'https://storage.tickitz.id/users/user11.jpg',   5,  true,  'user'),
+(12, 'dewi.anggraeni@gmail.com',   '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Dewi',     'Anggraeni',   '08111111109', 'https://storage.tickitz.id/users/user12.jpg',   1,  true,  'user'),
+(13, 'agus.setiawan@gmail.com',    '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Agus',     'Setiawan',    '08111111110', 'https://storage.tickitz.id/users/user13.jpg',   8,  true,  'user'),
+(14, 'sinta.permata@gmail.com',    '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Sinta',    'Permata',     '08111111111', 'https://storage.tickitz.id/users/user14.jpg',   9,  true,  'user'),
+(15, 'lisa.amelia@gmail.com',      '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Lisa',     'Amelia',      '08111111112', 'https://storage.tickitz.id/users/user15.jpg',   2,  true,  'user'),
+(16, 'tommy.wirawan@gmail.com',    '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Tommy',    'Wirawan',     '08111111113', 'https://storage.tickitz.id/users/user16.jpg',   3,  true,  'user'),
+(17, 'yuni.astuti@gmail.com',      '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Yuni',     'Astuti',      '08111111114', 'https://storage.tickitz.id/users/user17.jpg',   1,  true,  'user'),
+(18, 'kevin.pratama@gmail.com',    '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Kevin',    'Pratama',     '08111111115', 'https://storage.tickitz.id/users/user18.jpg',   6,  true,  'user'),
+(19, 'amanda.putri@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Amanda',   'Putri',       '08111111116', 'https://storage.tickitz.id/users/user19.jpg',  11,  true,  'user'),
+(20, 'rizky.hamdani@gmail.com',    '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Rizky',    'Hamdani',     '08111111117', 'https://storage.tickitz.id/users/user20.jpg',   1,  true,  'user'),
+(21, 'clara.monica@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Clara',    'Monica',      '08111111118', 'https://storage.tickitz.id/users/user21.jpg',   2,  true,  'user'),
+(22, 'dimas.arif@gmail.com',       '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Dimas',    'Arif',        '08111111119', 'https://storage.tickitz.id/users/user22.jpg',   7,  true,  'user'),
 -- USER BELUM VERIFIKASI EMAIL (isActive = false)
-(23, 'maya.sari@gmail.com',        '$2b$10$hashed.user023.xxxxx.xxxxx',  'Maya',     'Sari',        '08111111120', NULL,                                            2,  false, 'user'),
-(24, 'farhan.akbar@gmail.com',     '$2b$10$hashed.user024.xxxxx.xxxxx',  'Farhan',   'Akbar',       '08111111121', NULL,                                            1,  false, 'user'),
-(25, 'putri.rahayu@gmail.com',     '$2b$10$hashed.user025.xxxxx.xxxxx',  'Putri',    'Rahayu',      '08111111122', NULL,                                           11,  false, 'user');
+(23, 'maya.sari@gmail.com',        '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Maya',     'Sari',        '08111111120', NULL,                                            2,  false, 'user'),
+(24, 'farhan.akbar@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Farhan',   'Akbar',       '08111111121', NULL,                                            1,  false, 'user'),
+(25, 'putri.rahayu@gmail.com',     '$argon2id$v=19$m=65536,t=2,p=1$xIJYsW0jYK6HncD8JVUsZA$wGP3m49Qm7OrrFOAu/baOcutE3s/sUb0LaoGLy7B13Y',  'Putri',    'Rahayu',      '08111111122', NULL,                                           11,  false, 'user');
 
 
 -- ============================================================
