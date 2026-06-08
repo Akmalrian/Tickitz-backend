@@ -1,6 +1,8 @@
 package model
 
-import "time"
+import (
+	"time"
+)
 
 type Users struct {
 	ID         int        `json:"id" db:"id"`
@@ -23,8 +25,13 @@ type Locations struct {
 }
 
 type UserProfile struct {
-	FirstName string `json:"first_name" db:"first_name"`
-	LastName  string `json:"last_name" db:"last_name"`
-	Email     string `json:"email" db:"email"`
-	Phone     string `json:"phone" db:"phone"`
+	Id         int        `json:"id" db:"id"`
+	FirstName  string     `json:"first_name" db:"first_name"`
+	LastName   string     `json:"last_name" db:"last_name"`
+	Email      string     `json:"email" db:"email"`
+	Phone      string     `json:"phone" db:"phone"`
+	Photo      string     `json:"photo" db:"photo"`
+	Point      int        `json:"point" db:"point"`
+	Created_At time.Time  `json:"created_at" db:"created_at"`
+	Updated_At *time.Time `json:"updated_at" db:"updated_at"`
 }
