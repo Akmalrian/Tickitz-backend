@@ -58,11 +58,11 @@ func (s *UserService) GetProfile(ctx context.Context, userID int) (dto.UserProfi
 	fullName := strings.TrimSpace(profile.FirstName + " " + profile.LastName)
 
 	resp = dto.UserProfileResponse{
-		FirstName: profile.FirstName,
-		LastName:  profile.LastName,
-		FullName:  fullName,
+		FirstName: &profile.FirstName,
+		LastName:  &profile.LastName,
+		FullName:  &fullName,
 		Email:     profile.Email,
-		Phone:     profile.Phone,
+		Phone:     &profile.Phone,
 	}
 	_ = cache.SaveToCache(ctx, s.rdb, cacheKey, resp, userProfileTTL)
 
