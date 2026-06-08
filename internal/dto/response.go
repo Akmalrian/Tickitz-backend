@@ -110,10 +110,3 @@ type TicketResultResponse struct {
 	TicketCount   int       `json:"ticket_count"`
 	SeatLabels    string    `json:"seat_labels"`
 }
-type UserProfileResponse struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
-	FullName  string `json:"full_name"`
-	Email     string `json:"email"`
-	Phone     string `json:"phone"`
-}
