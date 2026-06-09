@@ -1,6 +1,11 @@
 package service
 
 import (
+	"context"
+	"log"
+
+	apperror "github.com/L1mus/Tickitz-backend/internal/appError"
+	"github.com/L1mus/Tickitz-backend/internal/dto"
 	"github.com/L1mus/Tickitz-backend/internal/repository"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
@@ -10,17 +15,14 @@ type OrderService struct {
 	db        *pgxpool.Pool
 }
 
-func NewOrderService(
-	orderRepo *repository.OrderRepository,
-	db *pgxpool.Pool,
-) *OrderService {
+func NewOrderService(orderRepo *repository.OrderRepository, db *pgxpool.Pool) *OrderService {
 	return &OrderService{
 		orderRepo: orderRepo,
 		db:        db,
 	}
 }
 
-func (s *OrderService) GetSeatPage() {
+func (s *OrderService) GetSeats(ctx context.Context, showtimeID int) (dto.SeatPageResponse, error) {
 	/*
 	   Mulai DB transaction (BEGIN)
 	   defer: rollback jika ada panic/error
@@ -30,10 +32,26 @@ func (s *OrderService) GetSeatPage() {
 	   Ambil semua kursi + status (Available/Sold) untuk showtime & cinema ini
 	   Jika error → rollback, return error
 	   Commit DB transaction
-	   Rakit jadi response: summary + daftar kursi
 	   return response, nil
 	*/
-}
+	tx, err := s.db.Begin(ctx)
+	if err != nil {
+		return dto.SeatPageResponse{}, err
+	}
+	defer func(tx pgx.Tx, ctx context.Context) {
+		if err != nil {
+			log.Println("rollback error: ", err.Error())
+		}
+	}(tx, ctx)
+	detailMovie, err := s.orderRepo.GetShowtimeSummary(ctx, tx, showtimeID)
+	if err != nil {
+		return dto.SeatPageResponse{}, err
+	}
+
+	data, err := s.orderRepo.GetSeatsByShowtime(ctx, tx, showtimeID, detailMovie.CinemaID)
+	if err != nil {
+		return dto.SeatPageResponse{}, err
+	}
 
 func (s *OrderService) CreateBooking() {
 	/*
