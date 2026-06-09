@@ -10,6 +10,7 @@ import (
 	"github.com/L1mus/Tickitz-backend/internal/config"
 	"github.com/L1mus/Tickitz-backend/internal/middleware"
 	"github.com/L1mus/Tickitz-backend/internal/router"
+	"github.com/L1mus/Tickitz-backend/pkg"
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
 )
@@ -33,7 +34,7 @@ import (
 // @description Bearer token used for authorization
 func main() {
 	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading env. \ncause: %s", err.Error())
+		log.Printf("Error loading env. \ncause: %s", err.Error())
 	}
 	if err := os.MkdirAll(filepath.Join("public", "img"), os.ModePerm); err != nil {
 		log.Fatalf("Failed to create upload directory: %s", err.Error())
@@ -55,9 +56,17 @@ func main() {
 		log.Fatalf("Redis connection error. \ncause: %s", err.Error())
 	}
 	defer rc.Close()
+	cfg := config.LoadConfig()
 	log.Println("Redis Connected")
+	mailer := pkg.NewGomailMailer(
+		cfg.SMTPHost,
+		cfg.SMTPPort,
+		cfg.SMTPUser,
+		cfg.SMTPPassword,
+		cfg.SMTPFromEmail,
+	)
 	// install router
-	router.InitRouter(app, db, rc)
+	router.InitRouter(app, db, rc,mailer)
 	// run
 	// addr := fmt.Sprintf("%s:%s", os.Getenv("APP_HOST"), os.Getenv("APP_PORT"))
 	app.Run(fmt.Sprintf("%s:%s", os.Getenv("APP_HOST"), os.Getenv("APP_PORT")))
