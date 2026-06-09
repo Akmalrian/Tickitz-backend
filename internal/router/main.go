@@ -24,6 +24,8 @@ func InitRouter(router *gin.Engine, db *pgxpool.Pool, rdb *redis.Client, mailer 
 	router.Static("/img", "public/img")
 
 	routeApi := router.Group("/api")
+	UserRouter(routeApi, db, rdb)
+	MovieRouter(router, db, rdb)
 	AuthRouter(routeApi, db, rdb, mailer)
 
 	//fallback
