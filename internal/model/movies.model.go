@@ -13,6 +13,14 @@ type MovieDetail struct {
 	Directors   string
 }
 
+type Movies struct {
+	Id          int
+	Title       string
+	Poster      string
+	ReleaseDate *time.Time
+	Genre       []Genre
+}
+
 type Genre struct {
 	ID    int
 	Genre string
