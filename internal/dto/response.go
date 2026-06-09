@@ -46,11 +46,7 @@ type MovieDetailResponse struct {
 	Genres      []GenreDTO `json:"genres"`
 	Casts       []CastDTO  `json:"casts"`
 }
-type ShowtimeFilterRequest struct {
-	Date     time.Time `json:"date"`
-	City     string    `json:"city"`
-	ShowTime *string   `json:"show_time,omitempty"`
-}
+
 type ShowtimeFilterResponse struct {
 	Showtime  []ShowtimeItemDTO `json:"showtime"`
 	Locations []LocationDTO     `json:"locations"`
