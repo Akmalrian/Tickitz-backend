@@ -39,3 +39,34 @@ func (r *UserRepository) GetUserProfile(ctx context.Context, userID int) (*model
 	}
 	return &up, nil
 }
+
+func (r *UserRepository) UpdateProfileById(ctx context.Context, userID int, firstName, lastName, phone, photo, hashedPassword *string) (model.UserProfile, error) {
+	q := `
+		UPDATE users
+		SET
+			first_name = COALESCE($2, first_name),
+			last_name = COALESCE($3, last_name),
+			phone = COALESCE($4, phone),
+			photo = COALESCE($5, photo),
+			password = COALESCE($6, password),
+			updated_at = NOW()
+		WHERE id = $1
+		RETURNING id, first_name, last_name, phone, photo;
+	`
+
+	args := []any{userID, firstName, lastName, phone, photo, hashedPassword}
+
+	var user model.UserProfile
+	err := r.db.QueryRow(ctx, q, args...).Scan(
+		&user.Id,
+		&user.FirstName,
+		&user.LastName,
+		&user.Phone,
+		&user.Photo,
+	)
+
+	if err != nil {
+		return model.UserProfile{}, err
+	}
+	return user, nil
+}
