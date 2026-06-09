@@ -121,7 +121,7 @@ func (as *AuthService) Register(ctx context.Context, req dto.RegisterRequest) (d
 	if err := as.rdb.Set(ctx, redisKey, otpCode, 5*time.Minute).Err(); err != nil {
 		return dto.RegisterResponse{}, apperror.ErrInternalServer
 	}
-	fmt.Printf("DEBUG: OTP Code for %s is: %s\n", req.Email, otpCode)
+	// fmt.Printf("DEBUG: OTP Code %s is: %s\n", req.Email, otpCode)
 
 	// send email otp
 	if err := as.mailer.SendOTP(req.Email, otpCode); err != nil {
