@@ -52,7 +52,7 @@ func (r *OrderRepository) GetSeatsByShowtime(ctx context.Context, tx OrderDBTX, 
 		WHERE s.cinema_id = $2
 		ORDER BY s.row ASC, s.seat_number ASC`
 
-	rows, err := dbtx.Query(ctx, q, showtimeID, cinemaID)
+	rows, err := tx.Query(ctx, q, showtimeID, cinemaID)
 	if err != nil {
 		return nil, err
 	}
