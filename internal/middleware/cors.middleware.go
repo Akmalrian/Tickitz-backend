@@ -3,30 +3,34 @@ package middleware
 import (
 	"net/http"
 	"slices"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 )
 
 func CORSMiddleware(ctx *gin.Context) {
-	origin := ctx.GetHeader("Origin")
-	AllowOrigins := []string{"http://localhost:5173", "http://localhost:3000", "http://localhost:9000", "http://localhost:80", "http://localhost:8080", "http://192.168.50.61:200"}
+    allowedOrigin := []string{
+        "http://localhost:5173", 
+        "http://localhost:3000", 
+        "http://localhost:9000", 
+        "http://localhost:6379", 
+        "http://localhost:200", 
+    }
 
-	// AllowOrigins := []string{allowedOrigin[]}
-	AllowHeaders := []string{"Origin", "Content-Type", "Authorization"}
-	AllowMethods := []string{http.MethodGet, http.MethodPost, http.MethodPatch, http.MethodDelete, http.MethodOptions}
+    currentOrigin := ctx.GetHeader("Origin")
 
-	if slices.Contains(AllowOrigins, origin) {
-		ctx.Header("Access-Control-Allow-Origin", origin)
-	}
+    if slices.Contains(allowedOrigin, currentOrigin) {
+        ctx.Header("Access-Control-Allow-Origin", currentOrigin)
+    }
+    ctx.Header("Access-Control-Allow-Credentials", "true")
 
-	ctx.Header("Access-Control-Allow-Headers", strings.Join(AllowHeaders, ", "))
-	ctx.Header("Access-Control-Allow-Methods", strings.Join(AllowMethods, ", "))
 
-	if ctx.Request.Method == http.MethodOptions {
-		ctx.AbortWithStatus(http.StatusNoContent)
-		return
-	}
+    ctx.Header("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+    ctx.Header("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, PATCH, DELETE")
 
-	ctx.Next()
+    if ctx.Request.Method == http.MethodOptions {
+        ctx.AbortWithStatus(http.StatusNoContent)
+        return
+    }
+
+    ctx.Next()
 }
