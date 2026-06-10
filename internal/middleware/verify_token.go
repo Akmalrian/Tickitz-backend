@@ -37,8 +37,8 @@ func VerifyToken(ctx *gin.Context) {
 	token := splittedBearer[1]
 
 	// verifikasi token nya
-	var claims pkg.Claims
-	if err := claims.VerifyJWT(token); err != nil {
+	claims, err := new(pkg.Claims).VerifyJWT(token)
+	if err != nil {
 		log.Println("Error: ", err.Error())
 		if errors.Is(err, jwt.ErrTokenInvalidIssuer) || errors.Is(err, jwt.ErrTokenExpired) {
 			ctx.AbortWithStatusJSON(http.StatusUnauthorized, dto.ResponseError{
