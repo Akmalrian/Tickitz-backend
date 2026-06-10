@@ -34,30 +34,26 @@ func (c *Claims) GenJWT() (string, error) {
 	return uToken.SignedString([]byte(jwtSecret))
 }
 
-func (c *Claims) VerifyJWT(token string) error {
+func (c *Claims) VerifyJWT(tokenString string) (*Claims, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
 	if jwtSecret == "" {
-		return errors.New("missing jwt secret")
+		return nil, errors.New("missing jwt secret")
 	}
 
-	jwtToken, err := jwt.ParseWithClaims(token, c, func(t *jwt.Token) (any, error) {
+	jwtToken, err := jwt.ParseWithClaims(tokenString, &Claims{}, func(t *jwt.Token) (any, error) {
 		return []byte(jwtSecret), nil
 	})
 	if err != nil {
-		return err
+		return nil, err
+	}
+	claims, ok := jwtToken.Claims.(*Claims)
+	if !ok || !jwtToken.Valid {
+		return nil, errors.New("invalid token claims")
 	}
 
-	if !jwtToken.Valid {
-		return jwt.ErrTokenExpired
+	if claims.Issuer != os.Getenv("JWT_ISSUER") {
+		return nil, jwt.ErrTokenInvalidIssuer
 	}
 
-	iss, err := jwtToken.Claims.GetIssuer()
-	if err != nil {
-		return err
-	}
-
-	if iss != os.Getenv("JWT_ISSUER") {
-		return jwt.ErrTokenInvalidIssuer
-	}
-	return nil
+	return claims, nil
 }

@@ -14,8 +14,9 @@ func UserRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Client) {
 	userRouter := router.Group("/users")
 	userRouter.Use(middleware.VerifyToken, middleware.CheckBlacklist(rdb))
 	userRepository := repository.NewUserRepository(db)
-	userService := service.NewUserService(userRepository, rdb)
+	userService := service.NewUserService(userRepository, rdb, db)
 	userController := controller.NewUserController(userService)
 
 	userRouter.GET("/profile", userController.GetUserProfile)
+	userRouter.PATCH("/profile", userController.UpdateProfile)
 }

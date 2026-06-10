@@ -6,12 +6,10 @@ CREATE TABLE users(
                       last_name VARCHAR(255),
                       phone VARCHAR(255),
                       photo VARCHAR(255),
-                      location_id INT NOT NULL,
+                      location_id INT,
                       isActive BOOLEAN NOT NULL DEFAULT FALSE,
                       role role_user NOT NULL DEFAULT 'user',
+                      point INT DEFAULT 0 CHECK (point >= 0),
                       created_at TIMESTAMP DEFAULT NOW(),
-                      updated_at TIMESTAMP,
-
-                      CONSTRAINT fk_forgot_locations FOREIGN KEY (location_id)
-                          REFERENCES locations (id) ON DELETE CASCADE
+                      updated_at TIMESTAMP
 );
