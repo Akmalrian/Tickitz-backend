@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -185,4 +186,46 @@ func (c *UserController) OrderHistory(ctx *gin.Context) {
 	}
 
 	response.Success(ctx, http.StatusOK, "Get Order History Succesfully", history)
+}
+
+// @Summary		Get Detail Information
+// @Description	Get detailed information for specific order history by user logged-in
+// @Tags		Users
+// @Accept		json
+// @Produce		json
+// @Security	ApiKeyAuth
+// @Param		id	path	int		true	"Booking Id"
+// @Success		200 {object}	dto.DetailInformationRes "Get Detail Information User Succesfully"
+// @Failure     400  {object}  dto.ResponseError "Invalid Booking Id Format"
+// @Failure     401  {object}  dto.ResponseError "Unauthorized: Token not exist / Format token invalid"
+// @Failure     500  {object}  dto.ResponseError "Internal Server Error"
+// @Router		/users/history/{id}/detail [get]
+func (c *UserController) DetailInformation(ctx *gin.Context) {
+	token, exist := ctx.Get("claims")
+	if !exist {
+		response.Error(ctx, http.StatusUnauthorized, "Unauthorized: Token not exist")
+		return
+	}
+	claims, ok := token.(*pkg.Claims)
+	if !ok {
+		log.Println("cek: ", claims)
+		response.Error(ctx, http.StatusUnauthorized, "Unauthorizzed: Format token invalid")
+		return
+	}
+
+	bookingIdStr := ctx.Param("id")
+	bookingId, err := strconv.Atoi(bookingIdStr)
+	if err != nil {
+		response.Error(ctx, http.StatusBadRequest, "Invalid Booking Id Format")
+		return
+	}
+
+	detail, err := c.userService.GetInformationDetail(ctx.Request.Context(), bookingId, claims.Id)
+	if err != nil {
+		fmt.Println("Error: ", err.Error())
+		response.Error(ctx, http.StatusInternalServerError, "Failed to Get Detail Information user")
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "Get Detail Information User Succesfully", detail)
 }

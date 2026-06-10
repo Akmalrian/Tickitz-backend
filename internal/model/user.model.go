@@ -71,5 +71,18 @@ type OrderHistoryDetail struct {
 	Cinema   Cinema
 }
 
-type detail struct {
+type InformationOrderDetail struct {
+	BookingId    int       `db:"booking_id"`
+	StatusTicket string    `db:"status_ticket"`
+	StatusPaid   string    `db:"status_paid"`
+	Quantity     int       `db:"quantity"`
+	CreatedAt    time.Time `db:"created_at"`
+	VirtualRek   *int      `db:"virtual_rek"`
+	TotalPrice   *int      `db:"total_price"`
+	QrCode       *string   `db:"qr_code"`
+	MovieTitle   string    `db:"title"`
+	Category     string    `db:"category"`
+	ShowtimeDate time.Time `db:"showtime_date"`
+	ShowtimeTime string    `db:"showtime_time"`
+	SeatList     *string   `db:"seat_list"`
 }
