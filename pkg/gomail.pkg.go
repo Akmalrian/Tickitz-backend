@@ -9,6 +9,7 @@ import (
 
 type Mailer interface {
 	SendOTP(to string, otpCode string) error
+	SendResetPasswordOTP(to string, otpCode string) error
 }
 
 type gomailMailer struct {
@@ -62,6 +63,39 @@ func (m *gomailMailer) SendOTP(to string, otpCode string) error {
 
 	if err := dialer.DialAndSend(msg); err != nil {
 		return fmt.Errorf("gomail failed send email: %w", err)
+	}
+
+	return nil
+}
+
+func (m *gomailMailer) SendResetPasswordOTP(to string, otpCode string) error {
+	msg := gomail.NewMessage()
+
+	msg.SetHeader("From", m.from)
+	msg.SetHeader("To", to)
+	msg.SetHeader("Subject", "Tickitz - Password Reset Request")
+
+	body := fmt.Sprintf(`
+		<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e5e7eb; border-radius: 8px;">
+			<h2 style="color: #dc2626; text-align: center;">Reset Password Request</h2>
+			<p style="color: #4b5563; font-size: 16px;">Hello,</p>
+			<p style="color: #4b5563; font-size: 16px;">We received a request to reset the password for your Tickitz account. Please use the following OTP code to proceed:</p>
+			
+			<div style="background-color: #fee2e2; padding: 16px; border-radius: 8px; text-align: center; margin: 24px 0;">
+				<h1 style="color: #b91c1c; letter-spacing: 8px; margin: 0; font-size: 32px;">%s</h1>
+			</div>
+			
+			<p style="color: #4b5563; font-size: 14px;">This code is valid for <strong>5 minutes</strong>. If you did not request a password reset, please ignore this email or contact support immediately.</p>
+			<hr style="border: none; border-top: 1px solid #e5e7eb; margin: 24px 0;" />
+			<p style="color: #9ca3af; font-size: 12px; text-align: center;">This is an automated email, please do not reply.</p>
+		</div>`, otpCode)
+
+	msg.SetBody("text/html", body)
+
+	dialer := gomail.NewDialer(m.host, m.port, m.username, m.password)
+
+	if err := dialer.DialAndSend(msg); err != nil {
+		return fmt.Errorf("gomail failed send reset password email: %w", err)
 	}
 
 	return nil

@@ -26,3 +26,19 @@ type LoginResponse struct {
 	Message string `json:"message"`
 	Token   string `json:"token"`
 }
+
+type ForgotPasswordRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}
+type VerifyResetOTPReq struct {
+	Email string `json:"email" binding:"required,email"`
+	OTP   string `json:"otp" binding:"required,len=6"`
+}
+type ResetPasswordReq struct {
+	Email       string `json:"email" binding:"required,email"`
+	NewPassword string `json:"new_password" binding:"required,min=8"`
+}
+
+type ResendOTPRequest struct {
+	Email string `json:"email" binding:"required,email"`
+}

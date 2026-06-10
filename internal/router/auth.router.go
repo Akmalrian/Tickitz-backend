@@ -18,7 +18,11 @@ func AuthRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Client, ma
 	// authService := service.NewAuthService(authRepository, rdb)
 	authController := controller.NewAuthController(authService)
 
-	authRouter.POST("/", authController.Login)
+	authRouter.POST("", authController.Login)
 	authRouter.POST("/register", authController.Register)
 	authRouter.POST("/register/activate", authController.Activate)
+	authRouter.POST("/register/resend-otp", authController.ResendOTP)
+	authRouter.POST("/check-email", authController.ForgotPassword)
+	authRouter.POST("/check-email/verify-otp", authController.VerifyResetOTP)
+	authRouter.POST("/check-email/verify-otp/reset", authController.ResetPassword)
 }

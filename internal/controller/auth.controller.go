@@ -25,14 +25,14 @@ func NewAuthController(authService *service.AuthService) *AuthController {
 }
 
 // @Summary      Login User
-// @Description  Melakukan autentikasi menggunakan email dan password untuk mendapatkan token JWT
+// @Description  Authenticate user using email and password to obtain a JWT token
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        request body dto.LoginRequest true "Payload Login"
-// @Success      200 {object} dto.ResponseSuccess{data=dto.LoginResponse} "Login Berhasil"
-// @Failure      400 {object} dto.ResponseError "Format input tidak valid"
-// @Failure      401 {object} dto.ResponseError "Email atau password salah"
+// @Param        request body dto.LoginRequest true "Login Payload"
+// @Success      200 {object} dto.ResponseSuccess{data=dto.LoginResponse} "Login Successful"
+// @Failure      401 {object} dto.ResponseError "Incorrect email or password"
+// @Failure      403 {object} dto.ResponseError "Account not activated (ACCOUNT_NOT_ACTIVATED)"
 // @Failure      500 {object} dto.ResponseError "Internal server error"
 // @Router       /auth [post]
 func (c *AuthController) Login(ctx *gin.Context) {
@@ -60,8 +60,8 @@ func (c *AuthController) Login(ctx *gin.Context) {
 			response.Error(ctx, http.StatusUnauthorized, apperror.ErrInvalidCredentials.Error())
 			return
 		}
-		if err.Error() == "please activate your account using the OTP sent to your email" {
-			response.Error(ctx, http.StatusForbidden, err.Error())
+		if errors.Is(err, apperror.ErrAccountNotActivated) {
+			response.Error(ctx, http.StatusForbidden, apperror.ErrAccountNotActivated.Error())
 			return
 		}
 
@@ -74,14 +74,14 @@ func (c *AuthController) Login(ctx *gin.Context) {
 }
 
 // @Summary      Register User
-// @Description  Mendaftarkan pengguna baru dan mengirimkan OTP ke email
+// @Description  Register a new user and send an OTP to their email
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        request body dto.RegisterRequest true "Payload Register"
-// @Success      201 {object} dto.ResponseSuccess{data=dto.RegisterResponse} "Register Berhasil"
-// @Failure      400 {object} dto.ResponseError "Format input tidak valid"
-// @Failure      409 {object} dto.ResponseError "Email sudah terdaftar"
+// @Param        request body dto.RegisterRequest true "Register Payload"
+// @Success      201 {object} dto.ResponseSuccess{data=dto.RegisterResponse} "Registration Successful"
+// @Failure      400 {object} dto.ResponseError "Invalid input data"
+// @Failure      409 {object} dto.ResponseError "Email is already registered"
 // @Failure      500 {object} dto.ResponseError "Internal server error"
 // @Router       /auth/register [post]
 func (c *AuthController) Register(ctx *gin.Context) {
@@ -117,13 +117,14 @@ func (c *AuthController) Register(ctx *gin.Context) {
 }
 
 // @Summary      Activate Account
-// @Description  Verifikasi OTP untuk mengaktifkan akun user
+// @Description  Verify OTP to activate the user account
 // @Tags         Auth
 // @Accept       json
 // @Produce      json
-// @Param        request body dto.ActivationRequest true "Payload Aktivasi"
-// @Success      200 {object} dto.ResponseSuccess "Akun berhasil diaktifkan"
-// @Failure      400 {object} dto.ResponseError "OTP tidak valid/kadaluarsa"
+// @Param        request body dto.ActivationRequest true "Activation Payload"
+// @Success      200 {object} dto.ResponseSuccess "Account activated successfully"
+// @Failure      400 {object} dto.ResponseError "Invalid input or Invalid/expired OTP"
+// @Failure      404 {object} dto.ResponseError "User not found
 // @Failure      500 {object} dto.ResponseError "Internal server error"
 // @Router       /auth/activate [post]
 func (c *AuthController) Activate(ctx *gin.Context) {
@@ -139,10 +140,164 @@ func (c *AuthController) Activate(ctx *gin.Context) {
 		if errors.Is(err, apperror.ErrOTPInvalid) || errors.Is(err, apperror.ErrOTPExpired) {
 			statusCode = http.StatusBadRequest
 		}
+		if errors.Is(err, apperror.ErrUserNotFound) {
+			response.Error(ctx, http.StatusNotFound, err.Error())
+			return
+		}
 
 		response.Error(ctx, statusCode, err.Error())
 		return
 	}
 
 	response.Success(ctx, http.StatusOK, "Account activated successfully", nil)
+}
+
+// @Summary      Resend OTP
+// @Description  Resend activation OTP to the user's email
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        body body dto.ResendOTPRequest true "Email Payload"
+// @Success      200 {object} dto.ResponseSuccess "OTP has been resent successfully"
+// @Failure      400 {object} dto.ResponseError "Invalid input data"
+// @Failure      404 {object} dto.ResponseError "User not found"
+// @Failure      422 {object} dto.ResponseError "Account is already activated"
+// @Failure      500 {object} dto.ResponseError "Failed to resend OTP"
+// @Router       /auth/register/resend-otp [post]
+func (c *AuthController) ResendOTP(ctx *gin.Context) {
+	var body dto.ResendOTPRequest
+	if err := ctx.ShouldBindJSON(&body); err != nil {
+		response.Error(ctx, http.StatusBadRequest, "Invalid input")
+		return
+	}
+
+	err := c.authService.ResendOTP(ctx.Request.Context(), body)
+	if err != nil {
+		if errors.Is(err, apperror.ErrAccountAlreadyActive) {
+			response.Error(ctx, http.StatusUnprocessableEntity, err.Error())
+			return
+		}
+		if errors.Is(err, apperror.ErrUserNotFound) {
+			response.Error(ctx, http.StatusNotFound, apperror.ErrUserNotFound.Error())
+			return
+		}
+
+		response.Error(ctx, http.StatusInternalServerError, "Failed to resend OTP")
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "OTP resent successfully", nil)
+}
+
+// @Summary      Forgot Password
+// @Description  Request an OTP to reset user password
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.ForgotPasswordRequest true "Email Payload"
+// @Success      200 {object} dto.ResponseSuccess "Reset password OTP sent to email"
+// @Failure      400 {object} dto.ResponseError "Invalid input data"
+// @Failure      404 {object} dto.ResponseError "User not found"
+// @Failure      500 {object} dto.ResponseError "Internal server error"
+// @Router       /auth/check-email [post]
+func (c *AuthController) ForgotPassword(ctx *gin.Context) {
+	var req dto.ForgotPasswordRequest
+	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
+		errStr := err.Error()
+		if strings.Contains(errStr, "email") {
+			response.Error(ctx, http.StatusBadRequest, apperror.ErrInvalidEmail.Error())
+		} else {
+			response.Error(ctx, http.StatusBadRequest, "Invalid input data")
+		}
+		return
+	}
+
+	err := c.authService.ForgotPassword(ctx.Request.Context(), req)
+	if err != nil {
+		if errors.Is(err, apperror.ErrUserNotFound) {
+			response.Error(ctx, http.StatusNotFound, apperror.ErrUserNotFound.Error())
+			return
+		}
+		response.Error(ctx, http.StatusInternalServerError, "Failed to process forgot password request")
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "Please check your email for the reset OTP", nil)
+}
+
+// @Summary      Verify Reset OTP
+// @Description  Verify the OTP sent for password reset
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.VerifyResetOTPReq true "OTP Payload"
+// @Success      200 {object} dto.ResponseSuccess "OTP verified successfully"
+// @Failure      400 {object} dto.ResponseError "Invalid input data or Invalid/Expired OTP"
+// @Failure      500 {object} dto.ResponseError "Internal server error"
+// @Router       /auth/check-email/verify-otp [post]
+func (c *AuthController) VerifyResetOTP(ctx *gin.Context) {
+	var req dto.VerifyResetOTPReq
+	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
+		errStr := err.Error()
+		if strings.Contains(errStr, "email") {
+			response.Error(ctx, http.StatusBadRequest, apperror.ErrInvalidEmail.Error())
+		} else {
+			response.Error(ctx, http.StatusBadRequest, "Invalid input data")
+		}
+		return
+	}
+
+	err := c.authService.VerifyResetOTP(ctx.Request.Context(), req)
+	if err != nil {
+		if errors.Is(err, apperror.ErrOTPInvalid) || errors.Is(err, apperror.ErrOTPExpired) {
+			response.Error(ctx, http.StatusBadRequest, err.Error())
+			return
+		}
+		response.Error(ctx, http.StatusInternalServerError, "Failed to verify OTP")
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "OTP verified successfully. You can now reset your password.", nil)
+}
+
+// @Summary      Reset Password
+// @Description  Set a new password after successful OTP verification
+// @Tags         Auth
+// @Accept       json
+// @Produce      json
+// @Param        request body dto.ResetPasswordReq true "New Password Payload"
+// @Success      200 {object} dto.ResponseSuccess "Password has been reset successfully"
+// @Failure      400 {object} dto.ResponseError "Invalid input data, Password Mismatch, or Session Expired"
+// @Failure      500 {object} dto.ResponseError "Internal server error"
+// @Router       /auth/check-email/verify-otp/reset [post]
+func (c *AuthController) ResetPassword(ctx *gin.Context) {
+	var req dto.ResetPasswordReq
+	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
+		errStr := err.Error()
+		if strings.Contains(errStr, "new_password") || strings.Contains(errStr, "min=8") {
+			response.Error(ctx, http.StatusBadRequest, apperror.ErrInvalidPassword.Error())
+		} else if strings.Contains(errStr, "email") {
+			response.Error(ctx, http.StatusBadRequest, apperror.ErrInvalidEmail.Error())
+		} else {
+			response.Error(ctx, http.StatusBadRequest, "Invalid input data")
+		}
+		return
+	}
+
+	err := c.authService.ResetPassword(ctx.Request.Context(), req)
+	if err != nil {
+		if errors.Is(err, apperror.ErrResetTokenExpired) {
+			response.Error(ctx, http.StatusBadRequest, err.Error())
+			return
+		}
+		if errors.Is(err, apperror.ErrInvalidPassword) {
+			response.Error(ctx, http.StatusBadRequest, apperror.ErrInvalidPassword.Error())
+			return
+		}
+		fmt.Println("error ini:", err)
+		response.Error(ctx, http.StatusInternalServerError, "Failed to reset password")
+		return
+	}
+
+	response.Success(ctx, http.StatusOK, "Password has been reset successfully", nil)
 }
