@@ -234,7 +234,7 @@ func (c *AuthController) ForgotPassword(ctx *gin.Context) {
 // @Success      200 {object} dto.ResponseSuccess "OTP verified successfully"
 // @Failure      400 {object} dto.ResponseError "Invalid input data or Invalid/Expired OTP"
 // @Failure      500 {object} dto.ResponseError "Internal server error"
-// @Router       /auth/forgot-password/verify-otp [post]
+// @Router       /auth/check-email/verify-otp [post]
 func (c *AuthController) VerifyResetOTP(ctx *gin.Context) {
 	var req dto.VerifyResetOTPReq
 	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
@@ -269,7 +269,7 @@ func (c *AuthController) VerifyResetOTP(ctx *gin.Context) {
 // @Success      200 {object} dto.ResponseSuccess "Password has been reset successfully"
 // @Failure      400 {object} dto.ResponseError "Invalid input data, Password Mismatch, or Session Expired"
 // @Failure      500 {object} dto.ResponseError "Internal server error"
-// @Router       /auth/forgot-password/verify-otp/reset [post]
+// @Router       /auth/check-email/verify-otp/reset [post]
 func (c *AuthController) ResetPassword(ctx *gin.Context) {
 	var req dto.ResetPasswordReq
 	if err := ctx.ShouldBindWith(&req, binding.JSON); err != nil {
