@@ -2,6 +2,8 @@ package repository
 
 import (
 	"context"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/L1mus/Tickitz-backend/internal/model"
@@ -18,13 +20,13 @@ func NewMovieRepository(db *pgxpool.Pool) *MovieRepository {
 
 func (r *MovieRepository) GetMovieDetail(ctx context.Context, movieID int) (*model.MovieDetail, error) {
 	const q = `
-		SELECT m.id, m.title, COALESCE(m.poster, '') AS poster, m.realase_data, CAST(m.duration AS TEXT) AS duration, COALESCE(m.synopsis, '') AS synopsis, COALESCE(m.category, '') AS category, STRING_AGG(DISTINCT d.name, ', ') AS directors
+		SELECT m.id, m.title, COALESCE(m.poster, '') AS poster, m.release_date, CAST(m.duration AS TEXT) AS duration, COALESCE(m.synopsis, '') AS synopsis, COALESCE(m.category, '') AS category, STRING_AGG(DISTINCT d.name, ', ') AS directors
 		FROM movies m
 		LEFT JOIN movie_directors md ON m.id = md.movie_id
 		LEFT JOIN directors d ON md.director_id = d.id
 		WHERE m.id = $1
 		GROUP BY
-			m.id, m.title, m.poster, m.realase_data,
+			m.id, m.title, m.poster, m.release_date,
 			m.duration, m.synopsis, m.category`
 
 	row := r.db.QueryRow(ctx, q, movieID)
@@ -145,4 +147,46 @@ func (r *MovieRepository) GetAvailableLocations(ctx context.Context, movieID int
 		locations = append(locations, l)
 	}
 	return locations, rows.Err()
+}
+
+func (r *MovieRepository) GetAllMovies(ctx context.Context) ([]model.Movies, error) {
+	const q = `SELECT m.id, m.title, STRING_AGG(g.id || ':' || g.genre, ',') AS genre, m.poster, m.release_date 
+				FROM movies m
+				JOIN movie_genres mg ON mg.movie_id = m.id 
+				JOIN genres g ON g.id = mg.genre_id
+				GROUP BY m.id, m.title, m.poster, m.release_date
+				ORDER BY m.release_date ASC
+				`
+	rows, err := r.db.Query(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var movies []model.Movies
+	for rows.Next() {
+		var m model.Movies
+		var genreString string
+
+		if err := rows.Scan(&m.Id, &m.Title, &genreString, &m.Poster, &m.ReleaseDate); err != nil {
+			return nil, err
+		}
+
+		if genreString != "" {
+			splitGenres := strings.Split(genreString, ",")
+			for _, gPair := range splitGenres {
+				gInfo := strings.Split(gPair, ":")
+				if len(gInfo) == 2 {
+					gID, _ := strconv.Atoi(gInfo[0])
+
+					m.Genre = append(m.Genre, model.Genre{
+						ID:    gID,
+						Genre: strings.TrimSpace(gInfo[1]),
+					})
+				}
+			}
+		}
+		movies = append(movies, m)
+	}
+	return movies, rows.Err()
 }

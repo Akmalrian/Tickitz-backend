@@ -115,3 +115,11 @@ type TicketResultResponse struct {
 	TicketCount   int       `json:"ticket_count"`
 	SeatLabels    string    `json:"seat_labels"`
 }
+
+type MovieResponse struct {
+	Id          int        `json:"id"`
+	Title       string     `json:"title"`
+	Poster      string     `json:"poster"`
+	Genres      []GenreDTO `json:"genres"`
+	ReleaseDate *time.Time `json:"release_date"`
+}
