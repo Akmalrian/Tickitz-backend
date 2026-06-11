@@ -18,5 +18,5 @@ func AdminMovieRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Clie
 
 	movieRouter.POST("/movies", movieController.AdminCreateMovie)
 	movieRouter.GET("/movies", movieController.AdminGetMovies)
-	movieRouter.PUT("/movies/:id", movieController.AdminUpdateMovie)
+	movieRouter.PATCH("/movies/:id", movieController.AdminUpdateMovie)
 }
