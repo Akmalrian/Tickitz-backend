@@ -25,14 +25,13 @@ func NewOrderController(orderService *service.OrderService) *OrderController {
 }
 
 func (c *OrderController) GetSeats(ctx *gin.Context) {
-	//_, exist := ctx.Get("claims")
-	//if !exist {
-	//	response.Error(ctx, http.StatusUnauthorized, "unauthorized")
-	//	return
-	//}
+	_, exist := ctx.Get("claims")
+	if !exist {
+		response.Error(ctx, http.StatusUnauthorized, "unauthorized")
+		return
+	}
 	var payload dto.OrderSeatRequest
 	if err := ctx.ShouldBindWith(&payload, binding.Query); err != nil {
-		log.Println(payload.ShowtimeId)
 		response.Error(ctx, http.StatusBadRequest, "bad request")
 		return
 	}
@@ -44,9 +43,14 @@ func (c *OrderController) GetSeats(ctx *gin.Context) {
 }
 
 func (c *OrderController) CreateBooking(ctx *gin.Context) {
-	token, _ := ctx.Get("claims")
-	log.Println(token)
-	claims := token.(pkg.Claims)
+	token, exist := ctx.Get("claims")
+	if !exist {
+		response.Error(ctx, http.StatusUnauthorized, "unauthorized need login")
+	}
+	//defer func() {
+	//	recover()
+	//}()
+	claims := token.(*pkg.Claims)
 
 	var payload dto.CreateBookingRequest
 	if err := ctx.ShouldBindWith(&payload, binding.JSON); err != nil {
