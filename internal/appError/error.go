@@ -22,4 +22,8 @@ var (
 	ErrAccountAlreadyActive = errors.New("account is already activated")
 	ErrPasswordMismatch     = errors.New("confirm password does not match")
 	ErrResetTokenExpired    = errors.New("unauthorized or session expired, please verify OTP again")
+	BookingNotFound         = errors.New("booking data not found")
+	UserIstMatch            = errors.New("user is not the same as the user who made the booking")
+	ForbiddenBooking        = errors.New("forbidden, booking does not belong to user")
+	TicketNotFound          = errors.New("forbidden, ticket does not belong to user")
 )
