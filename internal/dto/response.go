@@ -141,3 +141,8 @@ type MoviePaginationResponse struct {
 	Meta    PaginationMeta  `json:"meta"`
 	Data    []MovieResponse `json:"data"`
 }
+
+type ConfirmPaymentRequest struct {
+	TransactionID int `json:"transaction_id" binding:"required"`
+	BookingID     int `json:"booking_id" binding:"required"`
+}
