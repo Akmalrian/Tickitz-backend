@@ -60,15 +60,18 @@ func (s *UserService) GetProfile(ctx context.Context, userID int) (dto.UserProfi
 		return dto.UserProfileResponse{}, fmt.Errorf("get user profile from db: %w", err)
 	}
 
-	fullName := strings.TrimSpace(profile.FirstName + " " + profile.LastName)
+	fullName := strings.TrimSpace(*profile.First_Name + " " + *profile.Last_Name)
 
 	resp = dto.UserProfileResponse{
-		FirstName: &profile.FirstName,
-		LastName:  &profile.LastName,
+		Id:        profile.ID,
+		FirstName: profile.First_Name,
+		LastName:  profile.Last_Name,
 		FullName:  &fullName,
 		Email:     profile.Email,
-		Phone:     &profile.Phone,
-		Photo:     &profile.Photo,
+		Phone:     profile.Phone,
+		Photo:     profile.Photo,
+		Point:     &profile.Point,
+		Location:  profile.Location.Name,
 	}
 	_ = cache.SaveToCache(ctx, s.rdb, cacheKey, resp, userProfileTTL)
 
@@ -154,4 +157,61 @@ func (s *UserService) GetOrderHistory(ctx context.Context, userID int) ([]dto.Or
 
 	}
 	return responseList, nil
+}
+
+func (s *UserService) GetInformationDetail(ctx context.Context, bookingID, userID int) (*dto.DetailInformationRes, error) {
+	raw, err := s.userRepository.GetDetailById(ctx, bookingID, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	ticketStatus := "Ticket used"
+	if raw.StatusTicket == "active" {
+		ticketStatus = "Ticket in active"
+	}
+
+	paymentStatus := "Ticked used"
+	if raw.StatusPaid == "paid" {
+		paymentStatus = "Paid"
+	}
+
+	res := dto.DetailInformationRes{
+		BookingId:    raw.BookingId,
+		StatusTicket: ticketStatus,
+		StatusPaid:   paymentStatus,
+	}
+
+	if raw.TotalPrice != nil {
+		res.TotalPrice = *raw.TotalPrice
+	}
+
+	if raw.StatusPaid != "paid" {
+		if raw.VirtualRek != nil {
+			res.VirtualRek = *raw.VirtualRek
+		}
+
+		dueDate := raw.CreatedAt.Add(24 * time.Hour)
+		res.DueDateMessage = fmt.Sprintf("Pay this payment bill before it is due, on %s. If the bill has not been paid by the specified time, it will be forfeited", dueDate.Format("January 02, 2006"))
+	} else {
+		if raw.QrCode != nil {
+			res.QrCode = *raw.QrCode
+		}
+		res.Category = raw.Category
+		res.MovieTitle = raw.MovieTitle
+		res.Quantity = raw.Quantity
+		res.ShowtimeDate = raw.ShowtimeDate.Format("02 Jan")
+
+		t, err := time.Parse("15:04:00", raw.ShowtimeTime)
+		if err == nil {
+			res.ShowtimeTime = strings.ToLower(t.Format("03:04pm"))
+		}
+
+		if raw.SeatList != nil && *raw.SeatList != "" {
+			res.Seats = strings.Split(*raw.SeatList, ",")
+		} else {
+			res.Seats = []string{}
+		}
+	}
+
+	return &res, nil
 }

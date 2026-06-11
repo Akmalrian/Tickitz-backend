@@ -100,3 +100,41 @@ func (s *MovieService) GetShowtimeFilter(ctx context.Context, movieID int, date 
 		Locations: locationDTOs,
 	}, nil
 }
+
+func (s *MovieService) GetTotalCount(ctx context.Context, search, genre, status string) (int, error) {
+	total, err := s.movieRepo.GetTotalCount(ctx, search, genre, status)
+	if err != nil {
+		return 0, err
+	}
+	return total, nil
+}
+
+func (s *MovieService) GetAllMovies(ctx context.Context, search, genre, status, limit, page string) ([]dto.MovieResponse, error) {
+
+	repo, err := s.movieRepo.GetAllMovies(ctx, search, genre, status, limit, page)
+	if err != nil {
+		return nil, err
+	}
+
+	var responseList []dto.MovieResponse
+	for _, m := range repo {
+
+		var genreDTOs []dto.GenreDTO
+		for _, g := range m.Genre {
+			genreDTOs = append(genreDTOs, dto.GenreDTO{
+				ID:    g.ID,
+				Genre: g.Genre,
+			})
+		}
+
+		responseList = append(responseList, dto.MovieResponse{
+			Id:          m.Id,
+			Title:       m.Title,
+			Poster:      m.Poster,
+			Genres:      genreDTOs,
+			ReleaseDate: m.ReleaseDate,
+		})
+	}
+
+	return responseList, nil
+}

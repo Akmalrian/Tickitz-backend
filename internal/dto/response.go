@@ -115,3 +115,29 @@ type TicketResultResponse struct {
 	TicketCount   int       `json:"ticket_count"`
 	SeatLabels    string    `json:"seat_labels"`
 }
+
+type MovieResponse struct {
+	Id          int        `json:"id"`
+	Title       string     `json:"title"`
+	Poster      string     `json:"poster"`
+	Genres      []GenreDTO `json:"genres"`
+	ReleaseDate *time.Time `json:"release_date"`
+}
+
+type PaginationMeta struct {
+	CurrentPage int    `json:"current_page"`
+	Limit       int    `json:"limit"`
+	TotalData   int    `json:"total_data"`
+	TotalPage   int    `json:"total_page"`
+	HasNext     bool   `json:"has_next"`
+	HasPrev     bool   `json:"has_prev"`
+	Next        string `json:"next"`
+	Prev        string `json:"prev"`
+}
+
+type MoviePaginationResponse struct {
+	Status  string          `json:"status"`
+	Message string          `json:"message"`
+	Meta    PaginationMeta  `json:"meta"`
+	Data    []MovieResponse `json:"data"`
+}
