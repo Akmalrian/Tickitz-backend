@@ -175,6 +175,13 @@ func (s *TransactionService) CheckPayment(ctx context.Context, transactionID, bo
 	      Ambil data tiket lengkap (qr_code, movie, kursi, total) by transactionID
 	      return data tiket, nil
 	*/
+	isAlreadyPay, err := s.transactionRepo.CheckAlreadyTransaction(ctx, s.db, transactionID)
+	if err != nil {
+		return dto.TicketResultResponse{}, err
+	}
+	if isAlreadyPay > 0 {
+		return dto.TicketResultResponse{}, apperror.TicketAlreadyPaid
+	}
 	qrCode := fmt.Sprintf("%d-%d-%d", transactionID, bookingID, time.Now().Unix())
 
 	tx, err := s.db.Begin(ctx)

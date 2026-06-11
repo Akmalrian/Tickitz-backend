@@ -189,3 +189,15 @@ func (r *TransactionRepository) GetUser(ctx context.Context, tx TransactionDBTX,
 	}
 	return &up, nil
 }
+
+func (r *TransactionRepository) CheckAlreadyTransaction(ctx context.Context, tx TransactionDBTX, transactionID int) (int, error) {
+	q := `
+	SELECT COUNT(*)
+	FROM transactions
+	WHERE status    = 'completed'
+	AND id = $1;
+`
+	var count int
+	err := tx.QueryRow(ctx, q, transactionID).Scan(&count)
+	return count, err
+}

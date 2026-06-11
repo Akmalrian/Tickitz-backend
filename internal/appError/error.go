@@ -26,4 +26,5 @@ var (
 	UserIstMatch            = errors.New("user is not the same as the user who made the booking")
 	ForbiddenBooking        = errors.New("forbidden, booking does not belong to user")
 	TicketNotFound          = errors.New("forbidden, ticket does not belong to user")
+	TicketAlreadyPaid       = errors.New("forbidden, ticket have been paid")
 )

@@ -128,6 +128,10 @@ func (c *TransactionController) ConfirmPayment(ctx *gin.Context) {
 
 	res, err := c.transactionService.CheckPayment(ctx, payload.TransactionID, payload.BookingID)
 	if err != nil {
+		if errors.Is(err, apperror.TicketAlreadyPaid) {
+			response.Error(ctx, http.StatusNotAcceptable, err.Error())
+			return
+		}
 		response.Error(ctx, http.StatusInternalServerError, "internal server error")
 		return
 	}
