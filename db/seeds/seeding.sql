@@ -13,6 +13,7 @@
 
 -- ============================================================
 -- 1. LOCATIONS (sama seperti sebelumnya)
+-- 1. LOCATIONS (12 kota Indonesia +realase_data Purwokerto sesuai desain)
 -- ============================================================
 INSERT INTO locations (id, city) VALUES
 (1,  'Jakarta'),
@@ -136,6 +137,12 @@ INSERT INTO casts (id, name) VALUES
 --  TMDB base: https://image.tmdb.org/t/p/w500
 -- ============================================================
 INSERT INTO movies (id, title, duration, poster, release_date, synopsis, category) VALUES
+(1,  'Interstellar Reborn',
+     '02:49:00',
+     'https://storage.tickitz.id/posters/interstellar_reborn.jpg',
+     '2025-03-15',
+     'Seorang astronot nekat melintasi lubang cacing demi menyelamatkan umat manusia dari kehancuran bumi yang semakin tak layak huni. Perjalanan melintasi ruang dan waktu membawa konsekuensi yang tak pernah ia bayangkan sebelumnya.',
+     '13+'),
 
 -- ── NOW SHOWING ──────────────────────────────────────────────
 
