@@ -10,7 +10,7 @@
 -- ================================================================
 
 -- ============================================================
--- 1. LOCATIONS (12 kota Indonesia + Purwokerto sesuai desain)
+-- 1. LOCATIONS (12 kota Indonesia +realase_data Purwokerto sesuai desain)
 -- ============================================================
 INSERT INTO locations (id, city) VALUES
 (1,  'Jakarta'),
@@ -124,7 +124,7 @@ INSERT INTO casts (id, name) VALUES
 -- ============================================================
 -- 6. MOVIES (18 film — mix Indonesia & internasional)
 -- ============================================================
-INSERT INTO movies (id, title, duration, poster, realase_data, synopsis, category) VALUES
+INSERT INTO movies (id, title, duration, poster, release_date, synopsis, category) VALUES
 (1,  'Interstellar Reborn',
      '02:49:00',
      'https://storage.tickitz.id/posters/interstellar_reborn.jpg',
