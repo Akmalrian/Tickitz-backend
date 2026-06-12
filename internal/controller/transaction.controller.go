@@ -50,9 +50,8 @@ func (c TransactionController) GetPaymentInformation(ctx *gin.Context) {
 	}
 
 	claims := token.(*pkg.Claims)
-	fmt.Println("why nil", claims)
 
-	bookingIdString := ctx.Query("booking_id")
+	bookingIdString := ctx.Param("id")
 	bookingId, _ := strconv.Atoi(bookingIdString)
 	res, err := c.transactionService.GetPaymentPage(ctx.Request.Context(), bookingId, claims.Id)
 	if err != nil {
