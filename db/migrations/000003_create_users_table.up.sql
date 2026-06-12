@@ -7,7 +7,7 @@ CREATE TABLE users
     last_name   VARCHAR(255),
     phone       VARCHAR(255),
     photo       VARCHAR(255),
-    location_id INT                 NOT NULL,
+    location_id INT,
     isActive    BOOLEAN             NOT NULL DEFAULT FALSE,
     role        role_user           NOT NULL DEFAULT 'user',
     created_at  TIMESTAMP                    DEFAULT NOW(),
