@@ -18,11 +18,11 @@ func TransactionRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Cli
 	transactionService := service.NewTransactionService(transactionRepo, orderRepo, db)
 	transactionController := controller.NewTransactionController(transactionService)
 
-	transactionRouter.GET("/payment", transactionController.GetPaymentInformation)
+	transactionRouter.GET("/payment/:id", transactionController.GetPaymentInformation)
 	transactionRouter.POST("/submit", transactionController.SubmitPayment)
 	transactionRouter.POST("/confirm", transactionController.ConfirmPayment)
-	transactionRouter.GET("/result", transactionController.GetResultTicket)
-	transactionRouter.GET("/qr", transactionController.GetQrCodeImage)
+	transactionRouter.GET("/ticket/:id", transactionController.GetResultTicket)
+	transactionRouter.GET("/qr/:id", transactionController.GetQrCodeImage)
 	transactionRouter.POST("/checkout", transactionController.TryCheckOutDoku)
 	transactionRouter.POST("/doku-callback", transactionController.TryCallback)
 }
