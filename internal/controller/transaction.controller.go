@@ -155,7 +155,7 @@ func (c *TransactionController) GetResultTicket(ctx *gin.Context) {
 		response.Error(ctx, http.StatusUnauthorized, "please login first !")
 		return
 	}
-	transactionIDString := ctx.Param("transaction_id")
+	transactionIDString := ctx.Param("id")
 	transactionId, _ := strconv.Atoi(transactionIDString)
 	res, err := c.transactionService.GetTicketResult(ctx.Request.Context(), transactionId)
 	if err != nil {
