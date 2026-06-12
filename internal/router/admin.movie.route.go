@@ -10,18 +10,11 @@ import (
 )
 
 func AdminMovieRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Client) {
-
 	movieRouter := router.Group("/admin")
 
 	movieRepository := repository.AdminNewMovieRepository(db)
 	movieService := service.AdminNewMovieService(movieRepository)
 	movieController := controller.AdminNewMovieController(movieService)
-
-	movieOptionRepo := repository.NewMovieOptionRepository(db)
-	movieOptionService := service.NewMovieOptionService(movieOptionRepo)
-	movieOptionController := controller.NewMovieOptionController(movieOptionService)
-
-	movieRouter.GET("/movie-options", movieOptionController.GetOptions)
 
 	movieRouter.POST("/movies", movieController.AdminCreateMovie)
 	movieRouter.GET("/movies", movieController.AdminGetMovies)
