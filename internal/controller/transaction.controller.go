@@ -176,7 +176,7 @@ func (c *TransactionController) GetResultTicket(ctx *gin.Context) {
 // @Failure      500          {object}  dto.ResponseError "failed to generate QR Code"
 // @Router       /transactions/qr [get]
 func (c *TransactionController) GetQrCodeImage(ctx *gin.Context) {
-	transactionIDString := ctx.Query("transaction_id")
+	transactionIDString := ctx.Param("id")
 	transactionId, _ := strconv.Atoi(transactionIDString)
 	result, err := c.transactionService.GetTicketResult(ctx, transactionId)
 	if err != nil {
