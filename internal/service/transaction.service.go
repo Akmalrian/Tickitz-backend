@@ -151,10 +151,11 @@ func (s *TransactionService) SubmitPayment(ctx context.Context, userID int, req 
 	}
 
 	return dto.TransactionModalResponse{
-		TransactionID: modal.TransactionID,
-		VirtualRek:    modal.VirtualRek,
-		TotalPrice:    modal.TotalPrice,
-		Status:        modal.Status,
+		TransactionID:   modal.TransactionID,
+		VirtualRek:      modal.VirtualRek,
+		TotalPrice:      modal.TotalPrice,
+		Status:          modal.Status,
+		PaymentDeadline: modal.PaymentDeadline,
 	}, nil
 }
 
