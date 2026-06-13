@@ -137,7 +137,7 @@ func (c *AdminMovieController) AdminCreateMovie(ctx *gin.Context) {
 	}
 
 	if !allowedExtensions[extension] {
-		response.Error(ctx, http.StatusBadRequest, "Invalid image format. Only .jpg, .jpeg,.png and webp are allowed")
+		response.Error(ctx, http.StatusBadRequest, "Invalid image format. Only .jpg, .jpeg,.png and .webp are allowed")
 		return
 	}
 
@@ -207,7 +207,7 @@ func (c *AdminMovieController) AdminUpdateMovie(ctx *gin.Context) {
 		}
 
 		extension := strings.ToLower(filepath.Ext(req.Poster.Filename))
-		allowedExtensions := map[string]bool{".jpg": true, ".jpeg": true, ".png": true}
+		allowedExtensions := map[string]bool{".jpg": true, ".jpeg": true, ".png": true, ".webp": true}
 
 		if !allowedExtensions[extension] {
 			response.Error(ctx, http.StatusBadRequest, "Invalid image format")
