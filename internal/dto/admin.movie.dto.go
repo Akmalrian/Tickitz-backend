@@ -30,8 +30,6 @@ type AdminMovieListResponse struct {
 	Limit     int                 `json:"limit"`
 }
 
-// AdminMovieDetailResponse — response lengkap untuk halaman edit movie
-// Berisi semua relasi: genre_ids, cast_ids, director_ids, location_ids, dates, times
 type AdminMovieDetailResponse struct {
 	ID          int        `json:"id"`
 	Title       string     `json:"title"`
