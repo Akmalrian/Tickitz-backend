@@ -42,7 +42,7 @@ func (c *MovieController) GetAll(ctx *gin.Context) {
 	pageParam := ctx.DefaultQuery("page", "1")
 	locationParam := ctx.Query("location_id")
 
-	movies, err := c.movieService.GetAllMovies(ctx.Request.Context(), searchParam, genreParam, statusParam, locationParam, limitParam, pageParam)
+	movies, err := c.movieService.GetAllMovies(ctx.Request.Context(), searchParam, genreParam, statusParam, limitParam, pageParam, locationParam)
 	if err != nil {
 		fmt.Println("LOG ERROR 500:", err.Error())
 		response.Error(ctx, http.StatusInternalServerError, apperror.ErrInternalServer.Error())
