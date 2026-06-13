@@ -170,7 +170,7 @@ func (s *UserService) GetInformationDetail(ctx context.Context, bookingID, userI
 		ticketStatus = "Ticket in active"
 	}
 
-	paymentStatus := "Ticked used"
+	paymentStatus := "Ticket used"
 	if raw.StatusPaid == "paid" {
 		paymentStatus = "Paid"
 	}
@@ -179,10 +179,25 @@ func (s *UserService) GetInformationDetail(ctx context.Context, bookingID, userI
 		BookingId:    raw.BookingId,
 		StatusTicket: ticketStatus,
 		StatusPaid:   paymentStatus,
+		MovieTitle:   raw.MovieTitle,
+		Category:     raw.Category,
+		Quantity:     raw.Quantity,
 	}
 
 	if raw.TotalPrice != nil {
 		res.TotalPrice = *raw.TotalPrice
+	}
+
+	res.ShowtimeDate = raw.ShowtimeDate.Format("02 Jan")
+	t, err := time.Parse("15:04:00", raw.ShowtimeTime)
+	if err == nil {
+		res.ShowtimeTime = strings.ToLower(t.Format("03:04pm"))
+	}
+
+	if raw.SeatList != nil && *raw.SeatList != "" {
+		res.Seats = strings.Split(*raw.SeatList, ",")
+	} else {
+		res.Seats = []string{}
 	}
 
 	if raw.StatusPaid != "paid" {
@@ -195,21 +210,6 @@ func (s *UserService) GetInformationDetail(ctx context.Context, bookingID, userI
 	} else {
 		if raw.QrCode != nil {
 			res.QrCode = *raw.QrCode
-		}
-		res.Category = raw.Category
-		res.MovieTitle = raw.MovieTitle
-		res.Quantity = raw.Quantity
-		res.ShowtimeDate = raw.ShowtimeDate.Format("02 Jan")
-
-		t, err := time.Parse("15:04:00", raw.ShowtimeTime)
-		if err == nil {
-			res.ShowtimeTime = strings.ToLower(t.Format("03:04pm"))
-		}
-
-		if raw.SeatList != nil && *raw.SeatList != "" {
-			res.Seats = strings.Split(*raw.SeatList, ",")
-		} else {
-			res.Seats = []string{}
 		}
 	}
 
