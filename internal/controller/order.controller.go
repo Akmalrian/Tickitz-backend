@@ -47,7 +47,8 @@ func (c *OrderController) GetSeats(ctx *gin.Context) {
 	}
 	res, err := c.orderService.GetSeats(ctx.Request.Context(), payload.ShowtimeId)
 	if err != nil {
-		response.Error(ctx, http.StatusInternalServerError, "internal server error")
+		response.Error(ctx, http.StatusInternalServerError, err.Error())
+		return
 	}
 	response.Success(ctx, http.StatusOK, "get all information Success", res)
 }
