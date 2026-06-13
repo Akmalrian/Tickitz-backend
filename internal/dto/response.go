@@ -141,3 +141,27 @@ type MoviePaginationResponse struct {
 	Meta    PaginationMeta  `json:"meta"`
 	Data    []MovieResponse `json:"data"`
 }
+
+type ShowtimeDetail struct {
+	ShowtimeID   int       `json:"showtime_id"`
+	ShowDate     time.Time `json:"show_date"`
+	ShowTime     string    `json:"show_time"`
+	Price        int       `json:"price"`
+	LocationName string    `json:"location_name"`
+	CinemaID     int       `json:"cinema_id"`
+	CinemaName   string    `json:"cinema_name"`
+	CinemaLogo   string    `json:"cinema_logo"`
+	MoviePoster  string    `json:"movie_poster"`
+}
+
+type ShowtimeDetailResponse struct {
+	ShowtimeID  int    `json:"showtime_id"`
+	Date        string `json:"date"`
+	Time        string `json:"time"`
+	Price       int    `json:"price"`
+	City        string `json:"city"`
+	CinemaID    int    `json:"cinema_id"`
+	CinemaName  string `json:"cinema_name"`
+	CinemaLogo  string `json:"cinema_logo"`
+	MoviePoster string `json:"movie_poster"`
+}
