@@ -34,14 +34,14 @@ VALUES (1, 'Jakarta'),
 -- 2. PAYMENT METHODS
 -- ============================================================
 INSERT INTO payment_methods (id, logo, name)
-VALUES (1, '/img/pm/gopay.webp', 'GoPay'),
-       (2, '/img/pm/ovo.webp', 'OVO'),
-       (3, '/img/pm/dana.webp', 'DANA'),
-       (4, '/img/pm/bca.webp', 'Transfer BCA'),
-       (5, '/img/pm/mandiri.webp', 'Transfer Mandiri'),
-       (6, '/img/pm/bni.webp', 'Transfer BNI'),
-       (7, '/img/pm/creditcard.webp', 'Kartu Kredit'),
-       (8, '/img/pm/alfamart.webp', 'Alfamart');
+VALUES (1, '/img/pm/GOPAY.webp', 'GoPay'),
+       (2, '/img/pm/OVO.webp', 'OVO'),
+       (3, '/img/pm/DANA.webp', 'DANA'),
+       (4, '/img/pm/BCA.webp', 'Transfer BCA'),
+       (5, '/img/pm/BRI.webp', 'Transfer BRI'),
+       (6, '/img/pm/PAYPAL.webp', 'Paypal'),
+       (7, '/img/pm/VISA.webp', 'Kartu Kredit'),
+       (8, '/img/pm/GPLAY.webp', 'Google Play');
 
 
 -- ============================================================
