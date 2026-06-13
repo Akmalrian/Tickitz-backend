@@ -182,9 +182,7 @@ func (r *AdminMovieRepository) AdminGetMovieByID(ctx context.Context, id int) (*
 }
 
 // AdminGetMovieDetail — mengambil data lengkap movie untuk halaman edit
-// Termasuk genre_ids, cast_ids, director_ids, location_ids, dates, times
 func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) (*dto.AdminMovieDetailResponse, error) {
-	// 1. Data utama movie
 	var detail dto.AdminMovieDetailResponse
 	query := `
 		SELECT id, title, CAST(duration AS TEXT), COALESCE(poster, ''), release_date, COALESCE(synopsis, '')
@@ -203,7 +201,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		return nil, err
 	}
 
-	// 2. Genre IDs
 	genreRows, err := r.db.Query(ctx, `SELECT genre_id FROM movie_genres WHERE movie_id = $1`, id)
 	if err != nil {
 		return nil, err
@@ -219,7 +216,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		detail.GenreIDs = []int{}
 	}
 
-	// 3. Cast IDs
 	castRows, err := r.db.Query(ctx, `SELECT cast_id FROM movie_casts WHERE movie_id = $1`, id)
 	if err != nil {
 		return nil, err
@@ -235,7 +231,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		detail.CastIDs = []int{}
 	}
 
-	// 4. Director IDs
 	directorRows, err := r.db.Query(ctx, `SELECT director_id FROM movie_directors WHERE movie_id = $1`, id)
 	if err != nil {
 		return nil, err
@@ -251,7 +246,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		detail.DirectorIDs = []int{}
 	}
 
-	// 5. Location IDs (dari showtimes -> cinemas -> location_id, DISTINCT)
 	locationRows, err := r.db.Query(ctx, `
 		SELECT DISTINCT c.location_id 
 		FROM showtimes s
@@ -271,7 +265,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		detail.LocationIDs = []int{}
 	}
 
-	// 6. Dates (DISTINCT, dari showtimes)
 	dateRows, err := r.db.Query(ctx, `
 		SELECT DISTINCT TO_CHAR(date, 'YYYY-MM-DD') 
 		FROM showtimes 
@@ -291,7 +284,6 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 		detail.Dates = []string{}
 	}
 
-	// 7. Times (DISTINCT, dari showtimes)
 	timeRows, err := r.db.Query(ctx, `
 		SELECT DISTINCT TO_CHAR(time, 'HH24:MI') 
 		FROM showtimes 
