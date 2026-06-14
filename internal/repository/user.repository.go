@@ -60,12 +60,7 @@ func (r *UserRepository) UpdateProfileById(ctx context.Context, userID int, firs
 			password = COALESCE($6, password),
 			updated_at = NOW()
 		WHERE id = $1
-		RETURNING 
-		id,
-        COALESCE(first_name, ''), 
-        COALESCE(last_name, ''), 
-        COALESCE(phone, ''), 
-        COALESCE(photo, '')
+		RETURNING id, first_name, last_name, email, phone, photo;
 	`
 
 	args := []any{userID, firstName, lastName, phone, photo, hashedPassword}
@@ -75,6 +70,7 @@ func (r *UserRepository) UpdateProfileById(ctx context.Context, userID int, firs
 		&user.Id,
 		&user.FirstName,
 		&user.LastName,
+		&user.Email,
 		&user.Phone,
 		&user.Photo,
 	)

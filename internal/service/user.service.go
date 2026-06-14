@@ -116,6 +116,7 @@ func (s *UserService) UpdateProfile(ctx context.Context, userID int, req dto.Use
 	return dto.UserUpdateProfileRes{
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
+		Email:     user.Email,
 		Phone:     user.Phone,
 		Photo:     user.Photo,
 	}, nil
