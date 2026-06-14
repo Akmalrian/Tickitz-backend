@@ -39,10 +39,10 @@ VALUES (1, '/img/pm/gopay.webp', 'GoPay'),
        (2, '/img/pm/ovo.webp', 'OVO'),
        (3, '/img/pm/dana.webp', 'DANA'),
        (4, '/img/pm/bca.webp', 'Transfer BCA'),
-       (5, '/img/pm/mandiri.webp', 'Transfer Mandiri'),
-       (6, '/img/pm/bni.webp', 'Transfer BNI'),
-       (7, '/img/pm/creditcard.webp', 'Kartu Kredit'),
-       (8, '/img/pm/alfamart.webp', 'Alfamart');
+       (5, '/img/pm/bri.webp', 'Transfer BRI'),
+       (6, '/img/pm/paypal.webp', 'Paypal'),
+       (7, '/img/pm/visa.webp', 'Kartu Kredit'),
+       (8, '/img/pm/gplay.webp', 'Google Play');
 
 -- ============================================================
 -- 3. GENRES (20 genre dari TMDB)
