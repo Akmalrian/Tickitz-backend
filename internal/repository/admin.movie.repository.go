@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/L1mus/Tickitz-backend/internal/dto"
 	"github.com/L1mus/Tickitz-backend/internal/model"
@@ -20,7 +21,8 @@ func (r *AdminMovieRepository) AdminGetMovieList(ctx context.Context, search str
 	countQuery := `
 		SELECT COUNT(id) 
 		FROM movies 
-		WHERE ($1 = '' OR LOWER(title) LIKE LOWER($1))
+		WHERE deleted_at IS NULL
+		  AND ($1 = '' OR LOWER(title) LIKE LOWER($1))
 		  AND ($2 = 0 OR EXTRACT(MONTH FROM release_date) = $2)
 		  AND ($3 = 0 OR EXTRACT(YEAR FROM release_date) = $3)`
 
@@ -46,7 +48,8 @@ func (r *AdminMovieRepository) AdminGetMovieList(ctx context.Context, search str
 		FROM movies m
 		LEFT JOIN movie_genres mg ON m.id = mg.movie_id
 		LEFT JOIN genres g ON mg.genre_id = g.id
-		WHERE ($1 = '' OR LOWER(m.title) LIKE LOWER($1))
+		WHERE m.deleted_at IS NULL
+		  AND ($1 = '' OR LOWER(m.title) LIKE LOWER($1))
 		  AND ($2 = 0 OR EXTRACT(MONTH FROM m.release_date) = $2)
 		  AND ($3 = 0 OR EXTRACT(YEAR FROM m.release_date) = $3)
 		GROUP BY m.id, m.title, m.poster, m.release_date, m.duration
@@ -187,7 +190,7 @@ func (r *AdminMovieRepository) AdminGetMovieDetail(ctx context.Context, id int) 
 	query := `
 		SELECT id, title, CAST(duration AS TEXT), COALESCE(poster, ''), release_date, COALESCE(synopsis, '')
 		FROM movies 
-		WHERE id = $1`
+		WHERE id = $1 AND deleted_at IS NULL`
 
 	err := r.db.QueryRow(ctx, query, id).Scan(
 		&detail.ID,
@@ -393,6 +396,25 @@ func (r *AdminMovieRepository) AdminUpdateMovieFull(ctx context.Context, id int,
 	err = tx.Commit(ctx)
 	if err != nil {
 		return err
+	}
+
+	return nil
+}
+
+// soft delete movie
+func (r *AdminMovieRepository) SoftDeleteMovie(ctx context.Context, id int) error {
+
+	checkQuery := `SELECT id FROM movies WHERE id = $1 AND deleted_at IS NULL`
+	var movieID int
+	err := r.db.QueryRow(ctx, checkQuery, id).Scan(&movieID)
+	if err != nil {
+		return fmt.Errorf("movie not found or already deleted")
+	}
+
+	query := `UPDATE movies SET deleted_at = NOW() WHERE id = $1`
+	_, err = r.db.Exec(ctx, query, id)
+	if err != nil {
+		return fmt.Errorf("failed to delete movie: %w", err)
 	}
 
 	return nil
