@@ -8,5 +8,6 @@ CREATE TABLE movies
     synopsis TEXT,
     category VARCHAR(155),
     created_at TIMESTAMP DEFAULT NOW(),
-    updated_at TIMESTAMP
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP NULL DEFAULT NULL
 );
