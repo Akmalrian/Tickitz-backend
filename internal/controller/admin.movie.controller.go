@@ -235,3 +235,38 @@ func (c *AdminMovieController) AdminUpdateMovie(ctx *gin.Context) {
 
 	response.Success(ctx, http.StatusOK, "Update Movie Success", nil)
 }
+
+// delete movie
+func (c *AdminMovieController) AdminDeleteMovie(ctx *gin.Context) {
+	idStr := ctx.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		ctx.JSON(http.StatusBadRequest, dto.AdminResponseError{
+			Status:  "error",
+			Message: "Invalid movie ID",
+		})
+		return
+	}
+
+	err = c.movieService.SoftDeleteMovie(ctx.Request.Context(), id)
+	if err != nil {
+		if err.Error() == "movie not found or already deleted" {
+			ctx.JSON(http.StatusNotFound, dto.AdminResponseError{
+				Status:  "error",
+				Message: "Movie not found",
+			})
+			return
+		}
+		ctx.JSON(http.StatusInternalServerError, dto.AdminResponseError{
+			Status:  "error",
+			Message: "Failed to delete movie: " + err.Error(),
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, dto.AdminResponseSuccess{
+		Status:  "success",
+		Message: "Movie deleted successfully",
+		Data:    nil,
+	})
+}
