@@ -27,4 +27,5 @@ func AdminMovieRouter(router *gin.RouterGroup, db *pgxpool.Pool, rdb *redis.Clie
 	movieRouter.GET("/movies/:id", movieController.AdminGetMovieDetail)
 	movieRouter.GET("/movies", movieController.AdminGetMovies)
 	movieRouter.PATCH("/movies/:id", movieController.AdminUpdateMovie)
+	movieRouter.DELETE("/movies/:id", movieController.AdminDeleteMovie)
 }
