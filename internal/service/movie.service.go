@@ -101,17 +101,17 @@ func (s *MovieService) GetShowtimeFilter(ctx context.Context, movieID int, date 
 	}, nil
 }
 
-func (s *MovieService) GetTotalCount(ctx context.Context, search, genre, status string) (int, error) {
-	total, err := s.movieRepo.GetTotalCount(ctx, search, genre, status)
+func (s *MovieService) GetTotalCount(ctx context.Context, search, genre, status, locationID string) (int, error) {
+	total, err := s.movieRepo.GetTotalCount(ctx, search, genre, status, locationID)
 	if err != nil {
 		return 0, err
 	}
 	return total, nil
 }
 
-func (s *MovieService) GetAllMovies(ctx context.Context, search, genre, status, limit, page string) ([]dto.MovieResponse, error) {
+func (s *MovieService) GetAllMovies(ctx context.Context, search, genre, status, limit, page, locationID string) ([]dto.MovieResponse, error) {
 
-	repo, err := s.movieRepo.GetAllMovies(ctx, search, genre, status, limit, page)
+	repo, err := s.movieRepo.GetAllMovies(ctx, search, genre, status, limit, page, locationID)
 	if err != nil {
 		return nil, err
 	}
@@ -137,4 +137,45 @@ func (s *MovieService) GetAllMovies(ctx context.Context, search, genre, status, 
 	}
 
 	return responseList, nil
+}
+
+func (s *MovieService) GetMovieShowtimes(ctx context.Context, movieID int) ([]dto.ShowtimeDetailResponse, error) {
+	repoDetails, err := s.movieRepo.GetShowtimeDetailsByMovieID(ctx, movieID)
+	if err != nil {
+		return nil, err
+	}
+
+	var response []dto.ShowtimeDetailResponse
+	for _, item := range repoDetails {
+		response = append(response, dto.ShowtimeDetailResponse{
+			ShowtimeID:  item.ShowtimeID,
+			Date:        item.ShowDate.Format("2006-01-02"),
+			Time:        item.ShowTime,
+			Price:       item.Price,
+			City:        item.LocationName,
+			CinemaID:    item.CinemaID,
+			CinemaName:  item.CinemaName,
+			CinemaLogo:  item.CinemaLogo,
+			MoviePoster: item.MoviePoster,
+		})
+	}
+
+	return response, nil
+}
+
+func (s *MovieService) GetAllLocations(ctx context.Context) ([]dto.LocationDTO, error) {
+	locations, err := s.movieRepo.GetAllLocations(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	locationDTOs := make([]dto.LocationDTO, 0, len(locations))
+	for _, l := range locations {
+		locationDTOs = append(locationDTOs, dto.LocationDTO{
+			ID:   l.ID,
+			City: l.City,
+		})
+	}
+
+	return locationDTOs, nil
 }

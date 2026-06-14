@@ -53,6 +53,15 @@ func (s *AdminMovieService) AdminGetMovieList(ctx context.Context, params dto.Ad
 	}, nil
 }
 
+// Get Movie Detail (untuk halaman edit)
+func (s *AdminMovieService) AdminGetMovieDetail(ctx context.Context, movieID int) (*dto.AdminMovieDetailResponse, error) {
+	detail, err := s.movieRepo.AdminGetMovieDetail(ctx, movieID)
+	if err != nil {
+		return nil, fmt.Errorf("movie not found: %v", err)
+	}
+	return detail, nil
+}
+
 // Insert Add Movie
 func (s *AdminMovieService) AdminCreateMovie(ctx context.Context, req dto.AdminAddMovieRequest, filename string) (int, error) {
 
@@ -120,4 +129,9 @@ func (s *AdminMovieService) AdminUpdateMovie(ctx context.Context, movieID int, r
 	}
 
 	return s.movieRepo.AdminUpdateMovieFull(ctx, movieID, existingMovie, req)
+}
+
+// soft delete
+func (s *AdminMovieService) SoftDeleteMovie(ctx context.Context, id int) error {
+	return s.movieRepo.SoftDeleteMovie(ctx, id)
 }

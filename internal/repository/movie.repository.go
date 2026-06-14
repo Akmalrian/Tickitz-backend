@@ -7,7 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/L1mus/Tickitz-backend/internal/dto"
 	"github.com/L1mus/Tickitz-backend/internal/model"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
@@ -150,12 +152,12 @@ func (r *MovieRepository) GetAvailableLocations(ctx context.Context, movieID int
 	return locations, rows.Err()
 }
 
-func (r *MovieRepository) GetAllMovies(ctx context.Context, search, genre, status, limit, page string) ([]model.Movies, error) {
-	q := `SELECT m.id, m.title, STRING_AGG(g.id || ':' || g.genre, ',') AS genre, m.poster, m.release_date 
-				FROM movies m
-				JOIN movie_genres mg ON mg.movie_id = m.id 
-				JOIN genres g ON g.id = mg.genre_id
-				WHERE 1=1`
+func (r *MovieRepository) GetAllMovies(ctx context.Context, search, genre, status, limit, page, locationID string) ([]model.Movies, error) {
+	q := `SELECT m.id, m.title, COALESCE(STRING_AGG(g.id || ':' || g.genre, ','), '') AS genre, m.poster, m.release_date 
+          FROM movies m
+          JOIN movie_genres mg ON mg.movie_id = m.id 
+          JOIN genres g ON g.id = mg.genre_id
+          WHERE 1=1`
 	var args []any
 	argCount := 1
 
@@ -176,17 +178,28 @@ func (r *MovieRepository) GetAllMovies(ctx context.Context, search, genre, statu
 	}
 
 	if status == "now_showing" {
-		q += " AND m.release_date >= CURRENT_DATE - INTERVAL '1 month' AND m.release_date <= CURRENT_DATE"
+		q += " AND m.release_date >= (CURRENT_DATE - INTERVAL '1 month')::date AND m.release_date <= CURRENT_DATE::date"
 	} else if status == "upcoming" {
-		q += " AND m.release_date > CURRENT_DATE"
+		q += " AND m.release_date > CURRENT_DATE::date"
+	}
+	if locationID != "" {
+		q += fmt.Sprintf(` AND EXISTS (
+            SELECT 1 FROM showtimes st
+            JOIN cinemas c ON st.cinema_id = c.id
+            WHERE st.movie_id = m.id AND c.location_id = $%d
+        )`, argCount)
+		args = append(args, locationID)
+		argCount++
 	}
 
 	q += " GROUP BY m.id, m.title, m.poster, m.release_date"
 
 	if status == "upcoming" {
-		q += " ORDER BY m.release_date ASC"
+		q += " ORDER BY m.release_date ASC, m.id ASC"
+	} else if status == "now_showing" {
+		q += " ORDER BY m.release_date DESC, m.id DESC"
 	} else {
-		q += " ORDER BY m.release_date DESC"
+		q += " ORDER BY m.release_date ASC, m.id ASC"
 	}
 
 	pageInt, err := strconv.Atoi(page)
@@ -206,6 +219,7 @@ func (r *MovieRepository) GetAllMovies(ctx context.Context, search, genre, statu
 	args = append(args, limitSize, offsetSize)
 
 	rows, err := r.db.Query(ctx, q, args...)
+
 	if err != nil {
 		return nil, err
 	}
@@ -239,11 +253,11 @@ func (r *MovieRepository) GetAllMovies(ctx context.Context, search, genre, statu
 	return movies, rows.Err()
 }
 
-func (r *MovieRepository) GetTotalCount(ctx context.Context, search, genre, status string) (int, error) {
+func (r *MovieRepository) GetTotalCount(ctx context.Context, search, genre, status, locationID string) (int, error) {
 	query := `SELECT COUNT(DISTINCT m.id) 
 			  FROM movies m
-			  JOIN movie_genres mg ON mg.movie_id = m.id 
-			  JOIN genres g ON g.id = mg.genre_id
+			  LEFT JOIN movie_genres mg ON mg.movie_id = m.id 
+			  LEFT JOIN genres g ON g.id = mg.genre_id
 			  WHERE 1=1`
 
 	var args []any
@@ -256,18 +270,101 @@ func (r *MovieRepository) GetTotalCount(ctx context.Context, search, genre, stat
 	}
 
 	if genre != "" {
-		query += fmt.Sprintf(" AND LOWER(g.genre) = $%d", argCount)
+		query += fmt.Sprintf(` AND m.id IN (
+			SELECT movie_id FROM movie_genres 
+			JOIN genres ON genres.id = movie_genres.genre_id 
+			WHERE LOWER(genres.genre) = $%d
+		)`, argCount)
 		args = append(args, strings.ToLower(genre))
 		argCount++
 	}
 
 	if status == "now_showing" {
-		query += " AND m.release_date >= CURRENT_DATE - INTERVAL '1 month' AND m.release_date <= CURRENT_DATE"
+		query += " AND m.release_date >= (CURRENT_DATE - INTERVAL '1 month')::date AND m.release_date <= CURRENT_DATE::date"
 	} else if status == "upcoming" {
-		query += " AND m.release_date > CURRENT_DATE"
+		query += " AND m.release_date > CURRENT_DATE::date"
+	}
+	if locationID != "" {
+		query += fmt.Sprintf(` AND EXISTS (
+            SELECT 1 FROM showtimes st
+            JOIN cinemas c ON st.cinema_id = c.id
+            WHERE st.movie_id = m.id AND c.location_id = $%d
+        )`, argCount)
+		args = append(args, locationID)
+		argCount++
 	}
 
 	var total int
 	err := r.db.QueryRow(ctx, query, args...).Scan(&total)
 	return total, err
+}
+
+func (r *MovieRepository) GetShowtimeDetailsByMovieID(ctx context.Context, movieID int) ([]dto.ShowtimeDetail, error) {
+	query := `
+			SELECT 
+				s.id, s.date, s.time, s.price,
+				l.city, c.id, c.name, c.logo, m.poster
+			FROM showtimes s
+			JOIN cinemas c ON s.cinema_id = c.id
+			JOIN locations l ON c.location_id = l.id
+			JOIN movies m ON s.movie_id = m.id
+			WHERE s.movie_id = $1
+			ORDER BY s.date ASC, s.time ASC;
+		`
+
+	rows, err := r.db.Query(ctx, query, movieID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var showtimes []dto.ShowtimeDetail
+
+	for rows.Next() {
+		var s dto.ShowtimeDetail
+		err := rows.Scan(
+			&s.ShowtimeID,
+			&s.ShowDate,
+			&s.ShowTime,
+			&s.Price,
+			&s.LocationName,
+			&s.CinemaID,
+			&s.CinemaName,
+			&s.CinemaLogo,
+			&s.MoviePoster,
+		)
+		if err != nil {
+			return nil, err
+		}
+		showtimes = append(showtimes, s)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return showtimes, nil
+}
+
+func (r *MovieRepository) GetAllLocations(ctx context.Context) ([]model.Location, error) {
+	const q = `
+        SELECT id, city 
+        FROM locations 
+        ORDER BY city ASC`
+
+	rows, err := r.db.Query(ctx, q)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var locations []model.Location
+	for rows.Next() {
+		var l model.Location
+		if err := rows.Scan(&l.ID, &l.City); err != nil {
+			return nil, err
+		}
+		locations = append(locations, l)
+	}
+	return locations, rows.Err()
 }
